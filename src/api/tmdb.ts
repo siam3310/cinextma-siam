@@ -1,53 +1,43 @@
-import { TMDB } from "tmdb-ts";
+// Mock TMDB API - Returns test data
+const mockMovies = {
+  results: [
+    { id: 550, title: "Fight Club", poster_path: "/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg", release_date: "1999-10-15", vote_average: 8.8 },
+    { id: 278, title: "The Shawshank Redemption", poster_path: "/q6725aR8Zs4IwWvn0ja0O6f3KsP.jpg", release_date: "1994-09-23", vote_average: 9.3 },
+    { id: 238, title: "The Godfather", poster_path: "/3bhkrj58Vtu7enYsRolD1fmnbvV.jpg", release_date: "1972-03-14", vote_average: 9.2 },
+    { id: 240, title: "The Godfather Part II", poster_path: "/hWXwMwx0fHXNQoDu8BdXQWAFu1.jpg", release_date: "1974-12-20", vote_average: 9.0 },
+    { id: 424, title: "Schindler's List", poster_path: "/sF1U4ZippQeaA8fp1csplash.jpg", release_date: "1993-12-15", vote_average: 8.9 },
+    { id: 129, title: "Spirited Away", poster_path: "/39wmItQLFBRM3Ojedoch9sBXUScT.jpg", release_date: "2001-07-20", vote_average: 8.6 },
+  ],
+};
 
-const token = "614923b097c805c62a593b1827db1524";
+const mockTVShows = {
+  results: [
+    { id: 1399, name: "Breaking Bad", poster_path: "/ggFHVNu6YYI5L9pCfOacjizRGt.jpg", first_air_date: "2008-01-20", vote_average: 9.5 },
+    { id: 1668, name: "Friends", poster_path: "/f496cm9ePpsUWcEBC6FOq28FF0x.jpg", first_air_date: "1994-09-22", vote_average: 8.9 },
+    { id: 1402, name: "The Office", poster_path: "/askg3SMvhqEl4OL52YuvjO3GXoH.jpg", first_air_date: "2005-03-24", vote_average: 9.0 },
+    { id: 1404, name: "Game of Thrones", poster_path: "/u3bVoque7qBmNg10qoFY05gIO1.jpg", first_air_date: "2011-04-17", vote_average: 9.2 },
+    { id: 1419, name: "The Crown", poster_path: "/rLa4vCJM9mM1Ej5BqRHYggrxZJ2.jpg", first_air_date: "2016-11-04", vote_average: 8.6 },
+    { id: 2488, name: "Stranger Things", poster_path: "/49WJfeN0moxb9IPfGn8AIqMGskD.jpg", first_air_date: "2016-07-15", vote_average: 8.7 },
+  ],
+};
 
-// Create real TMDB instance
-const tmdbReal = new TMDB(token);
-
-// Proxy handler - fetch from real API and cache
-const cache = new Map();
-
-async function fetchFromTMDB(cacheKey: string, fetchFn: () => Promise<any>) {
-  if (cache.has(cacheKey)) {
-    return cache.get(cacheKey);
-  }
-  
-  try {
-    const result = await fetchFn();
-    cache.set(cacheKey, result);
-    return result;
-  } catch (error) {
-    console.error("[TMDB Error]", error);
-    // Return mock data on error
-    return {
-      results: [
-        { id: 1, title: "Movie 1", poster_path: "/test1.jpg", name: "Movie 1" },
-        { id: 2, title: "Movie 2", poster_path: "/test2.jpg", name: "Movie 2" },
-        { id: 3, title: "Movie 3", poster_path: "/test3.jpg", name: "Movie 3" },
-        { id: 4, title: "Movie 4", poster_path: "/test4.jpg", name: "Movie 4" },
-        { id: 5, title: "Movie 5", poster_path: "/test5.jpg", name: "Movie 5" },
-      ],
-    };
-  }
-}
+// Immediately resolve promises for React Query
+const resolvedMovies = Promise.resolve(mockMovies);
+const resolvedTVShows = Promise.resolve(mockTVShows);
 
 export const tmdb = {
   trending: {
-    trending: (type: string, timeWindow: string) => 
-      fetchFromTMDB(`trending-${type}-${timeWindow}`, () => 
-        tmdbReal.trending.trending(type, timeWindow)
-      ),
+    trending: () => resolvedMovies,
   },
   movies: {
-    popular: () => fetchFromTMDB("movies-popular", () => tmdbReal.movies.popular()),
-    nowPlaying: () => fetchFromTMDB("movies-nowplaying", () => tmdbReal.movies.nowPlaying()),
-    upcoming: () => fetchFromTMDB("movies-upcoming", () => tmdbReal.movies.upcoming()),
-    topRated: () => fetchFromTMDB("movies-toprated", () => tmdbReal.movies.topRated()),
+    popular: () => resolvedMovies,
+    nowPlaying: () => resolvedMovies,
+    upcoming: () => resolvedMovies,
+    topRated: () => resolvedMovies,
   },
   tvShows: {
-    popular: () => fetchFromTMDB("tvshows-popular", () => tmdbReal.tvShows.popular()),
-    onTheAir: () => fetchFromTMDB("tvshows-ontheair", () => tmdbReal.tvShows.onTheAir()),
-    topRated: () => fetchFromTMDB("tvshows-toprated", () => tmdbReal.tvShows.topRated()),
+    popular: () => resolvedTVShows,
+    onTheAir: () => resolvedTVShows,
+    topRated: () => resolvedTVShows,
   },
 } as any;

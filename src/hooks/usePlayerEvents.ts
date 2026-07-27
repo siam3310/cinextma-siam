@@ -1,9 +1,7 @@
-import { syncHistory } from "@/actions/histories";
 import { ContentType } from "@/types";
 import { diff } from "@/utils/helpers";
 import { useDocumentVisibility } from "@mantine/hooks";
 import { useEffect, useRef, useState } from "react";
-import useSupabaseUser from "./useSupabaseUser";
 
 export type PlayerEventType = "play" | "pause" | "seeked" | "ended" | "timeupdate";
 
@@ -94,51 +92,20 @@ export interface UsePlayerEventsOptions {
 }
 
 export function usePlayerEvents(options: UsePlayerEventsOptions = {}) {
-  const { data: user } = useSupabaseUser();
   const documentState = useDocumentVisibility();
 
-  const { metadata, saveHistory, onPlay, onPause, onSeeked, onEnded, onTimeUpdate } = options;
+  const { metadata, onPlay, onPause, onSeeked, onEnded, onTimeUpdate } = options;
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [lastEvent, setLastEvent] = useState<PlayerEventType | null>(null);
-  const [lastCurrentTime, setLastCurrentTime] = useState(0);
 
   const eventDataRef = useRef<UnifiedPlayerEventData | null>(null);
 
-  const syncToServer = async (data: UnifiedPlayerEventData, completed?: boolean) => {
-    if (!saveHistory || !user) return;
-    if (diff(data.currentTime, lastCurrentTime) <= 5) return; // prevent spam
-
-    const payload: UnifiedPlayerEventData = {
-      ...data,
-      season: data.season || metadata?.season || 0,
-      episode: data.episode || metadata?.episode || 0,
-    };
-
-    const { success, message } = await syncHistory(payload, completed);
-    if (success) setLastCurrentTime(data.currentTime);
-    else console.error("Save history failed:", message);
-  };
-
-  useEffect(() => {
-    if (!saveHistory || !user) return;
-    if (documentState === "visible") return;
-    if (!eventDataRef.current) return;
-    syncToServer(eventDataRef.current);
-  }, [documentState, lastCurrentTime]);
-
   useEffect(() => {
     const handleBeforeUnload = () => {
-      if (!saveHistory || !user) return;
-      if (!eventDataRef.current) return;
-
-      const payload = {
-        ...eventDataRef.current,
-        completed: eventDataRef.current.event === "ended",
-      };
-      navigator.sendBeacon("/api/player/save-history", JSON.stringify(payload));
+      // No sync needed
     };
 
     const handleMessage = (event: MessageEvent) => {
@@ -170,7 +137,6 @@ export function usePlayerEvents(options: UsePlayerEventsOptions = {}) {
           break;
         case "ended":
           setIsPlaying(false);
-          syncToServer(parsed, true);
           onEnded?.(parsed);
           break;
         case "seeked":
