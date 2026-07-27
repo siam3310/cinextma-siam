@@ -37,12 +37,6 @@ export const siteConfig: SiteConfigType = {
       activeIcon: <BiSolidSearchAlt2 className="size-full" />,
     },
     {
-      label: "Library",
-      href: "/library",
-      icon: <TbFolder className="size-full" />,
-      activeIcon: <TbFolderFilled className="size-full" />,
-    },
-    {
       label: "About",
       href: "/about",
       icon: <IoInformationCircleOutline className="size-full" />,
