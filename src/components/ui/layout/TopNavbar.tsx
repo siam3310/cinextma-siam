@@ -8,7 +8,6 @@ import { useWindowScroll } from "@mantine/hooks";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import FullscreenToggleButton from "../button/FullscreenToggleButton";
-import UserProfileButton from "../button/UserProfileButton";
 import SearchInput from "../input/SearchInput";
 import ThemeSwitchDropdown from "../input/ThemeSwitchDropdown";
 import BrandLogo from "../other/BrandLogo";
@@ -21,9 +20,8 @@ const TopNavbar = () => {
   const show = hrefs.includes(pathName);
   const tv = pathName.includes("/tv/");
   const player = pathName.includes("/player");
-  const auth = pathName.includes("/auth");
 
-  if (auth || player) return null;
+  if (player) return null;
 
   return (
     <Navbar
@@ -61,7 +59,6 @@ const TopNavbar = () => {
         <NavbarItem className="flex gap-1">
           <ThemeSwitchDropdown />
           <FullscreenToggleButton />
-          <UserProfileButton />
         </NavbarItem>
       </NavbarContent>
     </Navbar>

@@ -16,7 +16,6 @@ const HomePageList: React.FC = () => {
   return (
     <div className="flex flex-col gap-12">
       <ContentTypeSelection className="justify-center" />
-      <div className="text-sm text-foreground-500">Direct test: {movies.length} movie lists configured</div>
       <div className="relative flex flex-col gap-12">
         {content === "movie" && movies.map((movie) => <MovieHomeList key={movie.name} {...movie} />)}
         {content === "tv" && tvShows.map((tv) => <TvShowHomeList key={tv.name} {...tv} />)}
