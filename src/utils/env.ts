@@ -1,3 +1,6 @@
 export const env = {
   tmdbApiKey: process.env.NEXT_PUBLIC_TMDB_ACCESS_TOKEN ?? "",
+  NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
+  NEXT_PUBLIC_SUPABASE_ANON_KEY:
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "",
 };
