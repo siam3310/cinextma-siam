@@ -1,8 +1,11 @@
 import { TMDB } from "tmdb-ts";
 
-const token = "614923b097c805c62a593b1827db1524";
+const token = process.env.NEXT_PUBLIC_TMDB_ACCESS_TOKEN;
 
-// Create real TMDB instance
+if (!token) {
+  throw new Error("NEXT_PUBLIC_TMDB_ACCESS_TOKEN is not configured");
+}
+
 const tmdbReal = new TMDB(token);
 
 // Proxy handler - fetch from real API and cache

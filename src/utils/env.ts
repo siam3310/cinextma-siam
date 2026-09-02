@@ -1,4 +1,3 @@
-// Simple env config - no external dependencies needed
 export const env = {
-  tmdbApiKey: "614923b097c805c62a593b1827db1524",
+  tmdbApiKey: process.env.NEXT_PUBLIC_TMDB_ACCESS_TOKEN ?? "",
 };
